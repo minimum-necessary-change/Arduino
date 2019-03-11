@@ -22,10 +22,12 @@
 #ifndef __CORE_ESP8266_VERSION_H
 #define __CORE_ESP8266_VERSION_H
 
+#define HAS_ESP8266_VERSION_NUMERIC 1
+
 #include <core_version.h>
 
-#define STRHELPER(x) #x
-#define STR(x) STRHELPER(x)
+#define __STRHELPER(x) #x
+#define __STR(x) __STRHELPER(x)
 
 #ifdef __cplusplus
 extern "C++"
@@ -52,6 +54,20 @@ extern "C++"
 //     esp8266CoreVersionSubRevision() is 3   Numeric is: 20499903
 // case 2.5.0:
 //     esp8266CoreVersionSubRevision() is 0   Numeric is: 20500000
+//
+// Using esp8266::coreVersionNumeric() in a portable way:
+//
+//   #if HAS_ESP8266_VERSION_NUMERIC
+//       if (esp8266::coreVersionNumeric() >= 20500042)
+//       {
+//           // modern api can be used
+//       }
+//       else
+//   #endif
+//       {
+//           // code using older api
+//           // (will not be compiled in when newer api is usable)
+//       }
 
 namespace conststr {
 
@@ -111,7 +127,7 @@ namespace esp8266 {
 constexpr
 int coreVersionMajor ()
 {
-    return conststr::parseNthInteger(STR(ARDUINO_ESP8266_GIT_DESC), 0);
+    return conststr::parseNthInteger(__STR(ARDUINO_ESP8266_GIT_DESC), 0);
 }
 
 /*
@@ -120,7 +136,7 @@ int coreVersionMajor ()
 constexpr
 int coreVersionMinor ()
 {
-    return conststr::parseNthInteger(STR(ARDUINO_ESP8266_GIT_DESC), 1);
+    return conststr::parseNthInteger(__STR(ARDUINO_ESP8266_GIT_DESC), 1);
 }
 
 /*
@@ -129,7 +145,7 @@ int coreVersionMinor ()
 constexpr
 int coreVersionRevision ()
 {
-    return conststr::parseNthInteger(STR(ARDUINO_ESP8266_GIT_DESC), 2);
+    return conststr::parseNthInteger(__STR(ARDUINO_ESP8266_GIT_DESC), 2);
 }
 
 /*
@@ -139,7 +155,7 @@ int coreVersionRevision ()
 constexpr
 int coreVersionSubRevision ()
 {
-    return conststr::parseNthInteger(STR(ARDUINO_ESP8266_GIT_DESC), 3);
+    return conststr::parseNthInteger(__STR(ARDUINO_ESP8266_GIT_DESC), 3);
 }
 
 /*
