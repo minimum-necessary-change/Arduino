@@ -673,27 +673,27 @@ boards = collections.OrderedDict([
     }),
     ( 'wifinfo', {
         'name': 'WifInfo',
-        'opts': {
-            '.build.board': 'WIFINFO',
-            '.build.variant': 'wifinfo',
-            '.menu.ESPModule.ESP07192': 'ESP07 (1M/192K SPIFFS)',
-            '.menu.ESPModule.ESP07192.build.board': 'ESP8266_ESP07',
-            '.menu.ESPModule.ESP07192.build.flash_size': '1M',
-            '.menu.ESPModule.ESP07192.build.flash_ld': 'eagle.flash.1m192.ld',
-            '.menu.ESPModule.ESP07192.build.spiffs_start': '0xCB000',
-            '.menu.ESPModule.ESP07192.build.spiffs_end': '0xFB000',
-            '.menu.ESPModule.ESP07192.build.spiffs_blocksize': '4096',
-            '.menu.ESPModule.ESP07192.upload.maximum_size': '827376',
-            '.menu.ESPModule.ESP12': 'ESP12 (4M/1M SPIFFS)',
-            '.menu.ESPModule.ESP12.build.board': 'ESP8266_ESP12',
-            '.menu.ESPModule.ESP12.build.flash_size': '4M',
-            '.menu.ESPModule.ESP12.build.flash_ld': 'eagle.flash.4m1m.ld',
-            '.menu.ESPModule.ESP12.build.spiffs_start': '0x300000',
-            '.menu.ESPModule.ESP12.build.spiffs_end': '0x3FB000',
-            '.menu.ESPModule.ESP12.build.spiffs_blocksize': '8192',
-            '.menu.ESPModule.ESP12.build.spiffs_pagesize': '256',
-            '.menu.ESPModule.ESP12.upload.maximum_size': '1044464',
-            },
+        'opts': collections.OrderedDict([
+            ( '.build.board', 'WIFINFO' ),
+            ( '.build.variant', 'wifinfo' ),
+            ( '.menu.ESPModule.ESP07192', 'ESP07 (1M/192K SPIFFS)' ),
+            ( '.menu.ESPModule.ESP07192.build.board', 'ESP8266_ESP07' ),
+            ( '.menu.ESPModule.ESP07192.build.flash_size', '1M' ),
+            ( '.menu.ESPModule.ESP07192.build.flash_ld', 'eagle.flash.1m192.ld' ),
+            ( '.menu.ESPModule.ESP07192.build.spiffs_start', '0xCB000' ),
+            ( '.menu.ESPModule.ESP07192.build.spiffs_end', '0xFB000' ),
+            ( '.menu.ESPModule.ESP07192.build.spiffs_blocksize', '4096' ),
+            ( '.menu.ESPModule.ESP07192.upload.maximum_size', '827376' ),
+            ( '.menu.ESPModule.ESP12', 'ESP12 (4M/1M SPIFFS)' ),
+            ( '.menu.ESPModule.ESP12.build.board', 'ESP8266_ESP12' ),
+            ( '.menu.ESPModule.ESP12.build.flash_size', '4M' ),
+            ( '.menu.ESPModule.ESP12.build.flash_ld', 'eagle.flash.4m1m.ld' ),
+            ( '.menu.ESPModule.ESP12.build.spiffs_start', '0x300000' ),
+            ( '.menu.ESPModule.ESP12.build.spiffs_end', '0x3FB000' ),
+            ( '.menu.ESPModule.ESP12.build.spiffs_blocksize', '8192' ),
+            ( '.menu.ESPModule.ESP12.build.spiffs_pagesize', '256' ),
+            ( '.menu.ESPModule.ESP12.upload.maximum_size', '1044464' ),
+        ]),
         'macro': [
             'resetmethod_nodemcu',
             'flashmode_qio',
@@ -707,21 +707,21 @@ boards = collections.OrderedDict([
     }),
     ( 'arduino-esp8266', {
         'name': 'Arduino',
-        'opts': {
-            '.build.board': 'ESP8266_ARDUINO',
-            '.menu.BoardModel.primo': 'Primo',
-            '.menu.BoardModel.primo.build.board': 'ESP8266_ARDUINO_PRIMO',
-            '.menu.BoardModel.primo.build.variant': 'arduino_spi',
-            '.menu.BoardModel.primo.build.extra_flags': '-DF_CRYSTAL=40000000 -DESP8266',
-            '.menu.BoardModel.unowifideved': 'Uno WiFi',
-            '.menu.BoardModel.unowifideved.build.board': 'ESP8266_ARDUINO_UNOWIFI',
-            '.menu.BoardModel.unowifideved.build.variant': 'arduino_uart',
-            '.menu.BoardModel.unowifideved.build.extra_flags=-DF_CRYSTAL': '40000000 -DESP8266',
-            '.menu.BoardModel.starottodeved': 'Star OTTO',
-            '.menu.BoardModel.starottodeved.build.variant': 'arduino_uart',
-            '.menu.BoardModel.starottodeved.build.board': 'ESP8266_ARDUINO_STAR_OTTO',
-            '.menu.BoardModel.starottodeved.build.extra_flags': '-DF_CRYSTAL=40000000 -DESP8266',
-            },
+        'opts': collections.OrderedDict([
+            ( '.build.board', 'ESP8266_ARDUINO' ),
+            ( '.menu.BoardModel.primo', 'Primo' ),
+            ( '.menu.BoardModel.primo.build.board', 'ESP8266_ARDUINO_PRIMO' ),
+            ( '.menu.BoardModel.primo.build.variant', 'arduino_spi' ),
+            ( '.menu.BoardModel.primo.build.extra_flags', '-DF_CRYSTAL=40000000 -DESP8266' ),
+            ( '.menu.BoardModel.unowifideved', 'Uno WiFi' ),
+            ( '.menu.BoardModel.unowifideved.build.board', 'ESP8266_ARDUINO_UNOWIFI' ),
+            ( '.menu.BoardModel.unowifideved.build.variant', 'arduino_uart' ),
+            ( '.menu.BoardModel.unowifideved.build.extra_flags=-DF_CRYSTAL', '40000000 -DESP8266' ),
+            ( '.menu.BoardModel.starottodeved', 'Star OTTO' ),
+            ( '.menu.BoardModel.starottodeved.build.variant', 'arduino_uart' ),
+            ( '.menu.BoardModel.starottodeved.build.board', 'ESP8266_ARDUINO_STAR_OTTO' ),
+            ( '.menu.BoardModel.starottodeved.build.extra_flags', '-DF_CRYSTAL=40000000 -DESP8266' ),
+        ]),
         'macro': [
             'resetmethod_ck',
             'flashmode_qio',
@@ -1074,6 +1074,15 @@ macros = {
         ( '.menu.wipe.all.upload.erase_cmd', 'erase_flash' ),
         ]),
 
+    ######################## SSL supported protocols
+
+    'ssl_cipher_menu': collections.OrderedDict([
+        ( '.menu.ssl.all', 'All SSL ciphers (most compatible)' ),
+        ( '.menu.ssl.all.build.sslflags', ''),
+        ( '.menu.ssl.basic', 'Basic SSL ciphers (lower ROM use)' ),
+        ( '.menu.ssl.basic.build.sslflags', '-DBEARSSL_SSL_BASIC'),
+        ]),
+
     }
 
 ################################################################
@@ -1177,9 +1186,9 @@ def flash_map (flashsize_kb, spiffs_kb = 0):
         else:
             spiffs_blocksize = 8192
 
-    strsize = str(flashsize_kb / 1024) + 'M' if (flashsize_kb >= 1024) else str(flashsize_kb) + 'K'
-    strspiffs = str(spiffs_kb / 1024) + 'M' if (spiffs_kb >= 1024) else str(spiffs_kb) + 'K'
-    strspiffs_strip = str(spiffs_kb / 1024) + 'M' if (spiffs_kb >= 1024) else str(spiffs_kb) if (spiffs_kb > 0) else ''
+    strsize = str(int(flashsize_kb / 1024)) + 'M' if (flashsize_kb >= 1024) else str(flashsize_kb) + 'K'
+    strspiffs = str(int(spiffs_kb / 1024)) + 'M' if (spiffs_kb >= 1024) else str(spiffs_kb) + 'K'
+    strspiffs_strip = str(int(spiffs_kb / 1024)) + 'M' if (spiffs_kb >= 1024) else str(spiffs_kb) if (spiffs_kb > 0) else ''
 
     ld = 'eagle.flash.' + strsize.lower() + strspiffs_strip.lower() + '.ld'
     menu = '.menu.eesz.' + strsize + strspiffs_strip
@@ -1332,9 +1341,11 @@ def led (default,max):
 
 def sdk ():
     return { 'sdk': collections.OrderedDict([
-                        ('.menu.sdk.nonosdk221', 'nonos-sdk 2.2.1'),
+                        ('.menu.sdk.nonosdk221', 'nonos-sdk 2.2.1 (legacy)'),
                         ('.menu.sdk.nonosdk221.build.sdk', 'NONOSDK221'),
-                        ('.menu.sdk.nonosdk3v0', 'nonos-sdk pre-3'),
+                        ('.menu.sdk.nonosdk222', 'nonos-sdk 2.2.2-190313 (testing)'),
+                        ('.menu.sdk.nonosdk222.build.sdk', 'NONOSDK22x'),
+                        ('.menu.sdk.nonosdk3v0', 'nonos-sdk pre-3 (known issues)'),
                         ('.menu.sdk.nonosdk3v0.build.sdk', 'NONOSDK3V0'),
                     ])
            }
@@ -1382,6 +1393,7 @@ def all_boards ():
     print('menu.led=Builtin Led')
     print('menu.wipe=Erase Flash')
     print('menu.sdk=Espressif FW')
+    print('menu.ssl=SSL Support')
     print('')
 
     for id in boards:
@@ -1395,7 +1407,7 @@ def all_boards ():
                 print(id + optname + '=' + board['opts'][optname])
 
         # macros
-        macrolist = [ 'defaults', 'cpufreq_menu', 'vtable_menu', 'exception_menu' ]
+        macrolist = [ 'defaults', 'cpufreq_menu', 'vtable_menu', 'exception_menu', 'ssl_cipher_menu' ]
         if 'macro' in board:
             macrolist += board['macro']
         if lwip == 2:
