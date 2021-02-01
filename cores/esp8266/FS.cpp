@@ -46,6 +46,14 @@ int File::available() {
     return _p->size() - _p->position();
 }
 
+int File::availableForWrite() {
+    if (!_p)
+        return false;
+
+    return _p->availableForWrite();
+}
+
+
 int File::read() {
     if (!_p)
         return -1;
@@ -60,7 +68,7 @@ int File::read() {
 
 size_t File::read(uint8_t* buf, size_t size) {
     if (!_p)
-        return -1;
+        return 0;
 
     return _p->read(buf, size);
 }
@@ -180,6 +188,27 @@ String File::readString()
     return ret;
 }
 
+time_t File::getLastWrite() {
+    if (!_p)
+        return 0;
+
+    return _p->getLastWrite();
+}
+
+time_t File::getCreationTime() {
+    if (!_p)
+        return 0;
+
+    return _p->getCreationTime();
+}
+
+void File::setTimeCallback(time_t (*cb)(void)) {
+    if (!_p)
+        return;
+    _p->setTimeCallback(cb);
+    _timeCallback = cb;
+}
+
 File Dir::openFile(const char* mode) {
     if (!_impl) {
         return File();
@@ -192,7 +221,9 @@ File Dir::openFile(const char* mode) {
         return File();
     }
 
-    return File(_impl->openFile(om, am), _baseFS);
+    File f(_impl->openFile(om, am), _baseFS);
+    f.setTimeCallback(_timeCallback);
+    return f;
 }
 
 String Dir::fileName() {
@@ -201,6 +232,18 @@ String Dir::fileName() {
     }
 
     return _impl->fileName();
+}
+
+time_t Dir::fileTime() {
+    if (!_impl)
+        return 0;
+    return _impl->fileTime();
+}
+
+time_t Dir::fileCreationTime() {
+    if (!_impl)
+        return 0;
+    return _impl->fileCreationTime();
 }
 
 size_t Dir::fileSize() {
@@ -241,6 +284,14 @@ bool Dir::rewind() {
     return _impl->rewind();
 }
 
+void Dir::setTimeCallback(time_t (*cb)(void)) {
+    if (!_impl)
+        return;
+    _impl->setTimeCallback(cb);
+    _timeCallback = cb;
+}
+
+
 bool FS::setConfig(const FSConfig &cfg) {
     if (!_impl) {
         return false;
@@ -254,6 +305,7 @@ bool FS::begin() {
         DEBUGV("#error: FS: no implementation");
         return false;
     }
+    _impl->setTimeCallback(_timeCallback);
     bool ret = _impl->begin();
     DEBUGV("%s\n", ret? "": "#error: FS could not start");
     return ret;
@@ -315,7 +367,9 @@ File FS::open(const char* path, const char* mode) {
         DEBUGV("FS::open: invalid mode `%s`\r\n", mode);
         return File();
     }
-    return File(_impl->open(path, om, am), this);
+    File f(_impl->open(path, om, am), this);
+    f.setTimeCallback(_timeCallback);
+    return f;
 }
 
 bool FS::exists(const char* path) {
@@ -334,7 +388,9 @@ Dir FS::openDir(const char* path) {
         return Dir();
     }
     DirImplPtr p = _impl->openDir(path);
-    return Dir(p, this);
+    Dir d(p, this);
+    d.setTimeCallback(_timeCallback);
+    return d;
 }
 
 Dir FS::openDir(const String& path) {
@@ -385,6 +441,12 @@ bool FS::rename(const String& pathFrom, const String& pathTo) {
     return rename(pathFrom.c_str(), pathTo.c_str());
 }
 
+void FS::setTimeCallback(time_t (*cb)(void)) {
+    if (!_impl)
+        return;
+    _impl->setTimeCallback(cb);
+    _timeCallback = cb;
+}
 
 
 static bool sflags(const char* mode, OpenMode& om, AccessMode& am) {

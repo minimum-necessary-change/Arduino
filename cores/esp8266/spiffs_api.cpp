@@ -37,8 +37,8 @@ int32_t spiffs_hal_read(uint32_t addr, uint32_t size, uint8_t *dst) {
     return flash_hal_read(addr, size, dst);
 }
 
-
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 namespace spiffs_impl {
 
@@ -141,6 +141,16 @@ FS SPIFFS = FS(FSImplPtr(new spiffs_impl::SPIFFSImpl(
                              FS_PHYS_PAGE,
                              FS_PHYS_BLOCK,
                              SPIFFS_MAX_OPEN_FILES)));
+
+extern "C" void spiffs_request_end(void)
+{
+    // override default weak function
+    //ets_printf("debug: not weak spiffs end\n");
+    SPIFFS.end();
+}
+
+#pragma GCC diagnostic pop
+
 #endif // ARDUINO
 #endif // !CORE_MOCK
 

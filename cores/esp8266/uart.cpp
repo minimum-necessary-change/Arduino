@@ -48,6 +48,10 @@
 #include "user_interface.h"
 #include "uart_register.h"
 
+#define MODE2WIDTH(mode) (((mode%16)>>2)+5)
+#define MODE2STOP(mode) (((mode)>>5)+1)
+#define MODE2PARITY(mode) (mode%4)
+
 /*
   Some general architecture for GDB integration with the UART to enable
   serial debugging.
@@ -204,7 +208,14 @@ uart_read_char_unsafe(uart_t* uart)
     return -1;
 }
 
-size_t
+uint8_t
+uart_get_bit_length(const int uart_nr)
+{
+    // return bit length from uart mode, +1 for the start bit which is always there. 
+    return MODE2WIDTH(USC0(uart_nr)) + MODE2PARITY(USC0(uart_nr)) + MODE2STOP(USC0(uart_nr)) + 1;
+}
+
+size_t 
 uart_rx_available(uart_t* uart)
 {
     if(uart == NULL || !uart->rx_enabled)
@@ -360,8 +371,9 @@ uart_get_rx_buffer_size(uart_t* uart)
 
 // The default ISR handler called when GDB is not enabled
 void ICACHE_RAM_ATTR
-uart_isr(void * arg)
+uart_isr(void * arg, void * frame)
 {
+    (void) frame;
     uart_t* uart = (uart_t*)arg;
     uint32_t usis = USIS(uart->uart_nr);
 
@@ -494,8 +506,10 @@ uart_write(uart_t* uart, const char* buf, size_t size)
 
     size_t ret = size;
     const int uart_nr = uart->uart_nr;
-    while (size--)
+    while (size--) {
         uart_do_write_char(uart_nr, pgm_read_byte(buf++));
+        optimistic_yield(10000UL);
+    }
 
     return ret;
 }
@@ -566,7 +580,7 @@ uart_get_baudrate(uart_t* uart)
 }
 
 uart_t*
-uart_init(int uart_nr, int baudrate, int config, int mode, int tx_pin, size_t rx_size)
+uart_init(int uart_nr, int baudrate, int config, int mode, int tx_pin, size_t rx_size, bool invert)
 {
     uart_t* uart = (uart_t*) malloc(sizeof(uart_t));
     if(uart == NULL)
@@ -646,6 +660,10 @@ uart_init(int uart_nr, int baudrate, int config, int mode, int tx_pin, size_t rx
     }
 
     uart_set_baudrate(uart, baudrate);
+    if(uart->uart_nr == UART0 && invert)
+    {
+        config |= BIT(UCDTRI) | BIT(UCRTSI) | BIT(UCTXI) | BIT(UCDSRI) | BIT(UCCTSI) | BIT(UCRXI);
+    }
     USC0(uart->uart_nr) = config;
 
     if(!gdbstub_has_uart_isr_control() || uart->uart_nr != UART0) {

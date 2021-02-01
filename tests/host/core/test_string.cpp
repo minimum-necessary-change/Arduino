@@ -19,6 +19,19 @@
 #include <limits.h>
 #include <StreamString.h>
 
+TEST_CASE("String::move", "[core][String]")
+{
+    const char buffer[] = "this string goes over the sso limit";
+
+    String target;
+    String source(buffer);
+
+    target = std::move(source);
+    REQUIRE(source.c_str() != nullptr);
+    REQUIRE(!source.length());
+    REQUIRE(target == buffer);
+}
+
 TEST_CASE("String::trim", "[core][String]")
 {
     String str;
@@ -131,6 +144,22 @@ TEST_CASE("String concantenation", "[core][String]")
     REQUIRE(str == "-100");
     str = String((long)-100, 10);
     REQUIRE(str == "-100");
+    // Non-zero-terminated array concatenation
+    const char buff[] = "abcdefg";
+    String n;
+    n = "1234567890"; // Make it a SSO string, fill with non-0 data
+    n = "1"; // Overwrite [1] with 0, but leave old junk in SSO space still
+    n.concat(buff, 3);
+    REQUIRE(n == "1abc"); // Ensure the trailing 0 is always present even w/this funky concat
+    for (int i=0; i<20; i++)
+        n.concat(buff, 1); // Add 20 'a's to go from SSO to normal string
+    REQUIRE(n == "1abcaaaaaaaaaaaaaaaaaaaa");
+    n = "";
+    for (int i=0; i<=5; i++)
+        n.concat(buff, i);
+    REQUIRE(n == "aababcabcdabcde");
+    n.concat(buff, 0); // And check no add'n
+    REQUIRE(n == "aababcabcdabcde");
 }
 
 TEST_CASE("String comparison", "[core][String]")
@@ -216,6 +245,10 @@ TEST_CASE("String nulls", "[core][String]")
     REQUIRE(s.lastIndexOf("tacos") == -1);
     REQUIRE(s.lastIndexOf('t', 0) == -1);
     REQUIRE(s.lastIndexOf('t') == -1);
+    REQUIRE(s.indexOf(String("tacos"), 1) == -1);
+    REQUIRE(s.indexOf(String("tacos")) == -1);
+    REQUIRE(s.indexOf(F("tacos"), 1) == -1);
+    REQUIRE(s.indexOf(F("tacos")) == -1);
     REQUIRE(s.indexOf("tacos", 1) == -1);
     REQUIRE(s.indexOf("tacos") == -1);
     REQUIRE(s.indexOf('t', 1) == -1);

@@ -26,8 +26,6 @@
  */
 #include <limits>
 #include "FS.h"
-#undef max
-#undef min
 #include "FSImpl.h"
 extern "C" {
     #include "spiffs/spiffs.h"
@@ -78,6 +76,11 @@ public:
     , _maxOpenFds(maxOpenFds)
     {
         memset(&_fs, 0, sizeof(_fs));
+    }
+
+    ~SPIFFSImpl()
+    {
+        end();
     }
 
     FileImplPtr open(const char* path, OpenMode openMode, AccessMode accessMode) override;
@@ -162,20 +165,15 @@ public:
 
     bool setConfig(const FSConfig &cfg) override
     {
-        if ((cfg._type != SPIFFSConfig::fsid::FSId) || (SPIFFS_mounted(&_fs) != 0)) {
+        if ((cfg._type != SPIFFSConfig::FSId) || (SPIFFS_mounted(&_fs) != 0)) {
             return false;
         }
         _cfg = *static_cast<const SPIFFSConfig *>(&cfg);
-	return true;
+        return true;
     }
 
     bool begin() override
     {
-#if defined(ARDUINO) && !defined(CORE_MOCK)
-        if (&_FS_end <= &_FS_start)
-            return false;
-#endif
-
         if (SPIFFS_mounted(&_fs) != 0) {
             return true;
         }

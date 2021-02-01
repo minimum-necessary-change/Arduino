@@ -47,10 +47,14 @@ Prerequisites
 -  Python 3.x (https://python.org)
 -  terminal, console, or command prompt (depending on your OS)
 -  Internet connection
+-  Uninstalling any core version installed via Board Manager
 
 Instructions - Windows 10
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-- First, make sure you don't already have the ESP8266 library installed using the Board Manager (see above)
+- First, make sure you don't already have an ESP8266 core version installed 
+  using the Board Manager (see above). If you do, uninstall it from the 
+  Board Manager before proceeding. It is also advisable to erase the Arduino15 
+  contents.
 
 - Install git for Windows (if not already; see https://git-scm.com/download/win)
 
@@ -131,9 +135,15 @@ Note that you could, in theory install in ``C:\Program Files (x86)\Arduino\hardw
 Instructions - Other OS
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+-  First, make sure you don't already have an ESP8266 core version installed 
+   using the Board Manager (see above). If you do, uninstall it from the 
+   Board Manager before proceeding. It is also advisable to erase the .arduino15 (Linux)
+   or Arduino15 (MacOS) contents.
+
 -  Open the console and go to Arduino directory. This can be either your
    *sketchbook* directory (usually ``<Documents>/Arduino``), or the
    directory of Arduino application itself, the choice is up to you.
+
 -  Clone this repository into hardware/esp8266com/esp8266 directory.
    Alternatively, clone it elsewhere and create a symlink, if your OS
    supports them.
@@ -220,3 +230,20 @@ Instructions - Other OS
        cd hardware\esp8266com\esp8266
        git status
        git pull
+
+Using PlatformIO
+----------------
+
+`PlatformIO <https://platformio.org?utm_source=arduino-esp8266>`__
+is an open source ecosystem for IoT development with a cross-platform
+build system, a library manager, and full support for Espressif
+(ESP8266) development. It works on the following popular host operating
+systems: macOS, Windows, Linux 32/64, and Linux ARM (like Raspberry Pi,
+BeagleBone, CubieBoard).
+
+- `What is PlatformIO? <https://docs.platformio.org/en/latest/what-is-platformio.html?utm_source=arduino-esp8266>`__
+- `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=arduino-esp8266>`__
+- `PlatformIO Core <https://docs.platformio.org/en/latest/core.html?utm_source=arduino-esp8266>`__ (command line tool)
+- `Advanced usage <https://docs.platformio.org/en/latest/platforms/espressif8266.html?utm_source=arduino-esp8266>`__ - custom settings, uploading to LittleFS, Over-the-Air (OTA), staging version
+- `Integration with Cloud and Standalone IDEs <https://docs.platformio.org/en/latest/ide.html?utm_source=arduino-esp8266>`__ - Cloud9, Codeanywhere, Eclipse Che (Codenvy), Atom, CLion, Eclipse, Emacs, NetBeans, Qt Creator, Sublime Text, VIM, Visual Studio, and VSCode
+- `Project Examples <https://docs.platformio.org/en/latest/platforms/espressif8266.html?utm_source=arduino-esp8266#examples>`__
